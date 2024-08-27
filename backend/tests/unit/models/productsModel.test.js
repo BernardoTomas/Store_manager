@@ -2,7 +2,7 @@ const { expect } = require('chai');
 const sinon = require('sinon');
 const connection = require('../../../src/models/connection');
 const { productsModel } = require('../../../src/models');
-const { allProductsMock, singleProductMock } = require('../mocks/products.mocks');
+const { allProductsMock, singleProductMock, newProductMock } = require('../mocks/products.mocks');
 
 describe('Testes do products.model', function () {
   afterEach(function () {
@@ -36,5 +36,22 @@ describe('Testes do products.model', function () {
 
     expect(productById).to.be.an('object');
     expect(productById).to.deep.equal({});
+  });
+
+  it('Verificando o funcionamento do productsModel.registerNewProduct registrando um produto válido', async function () {
+    sinon.stub(connection, 'execute')
+      .onFirstCall()  
+      .resolves(null)
+      .onSecondCall()
+      .resolves([[newProductMock]]);
+
+    const newProduct = {
+      name: 'Guarda chuva RGB',
+    };
+
+    const newProductRegistry = await productsModel.registerNewProduct(newProduct);
+
+    expect(newProductRegistry).to.be.an('object');
+    expect(newProductRegistry).to.deep.equal(newProductMock);
   });
 });

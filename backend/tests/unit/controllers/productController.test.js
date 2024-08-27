@@ -14,6 +14,12 @@ const {
   singleProductMock,
   productNotFoundServiceResMock,
   dataNotFoundObj,
+  regNewProductServiceResMock,
+  newProductMock,
+  regNoNameProductServiceResMock,
+  noNameObj,
+  regBadNameProductServiceResMock,
+  badNameObj,
 } = require('../mocks/products.mocks');
 
 describe('Testes do products.controller', function () {
@@ -67,5 +73,51 @@ describe('Testes do products.controller', function () {
 
     expect(res.status).to.have.been.calledWith(404);
     expect(res.json).to.have.been.calledWith(dataNotFoundObj);
+  });
+
+  it('Verificando o retorno do productsController.registerNewProduct com um produto válido - status 201', async function () {
+    sinon.stub(productsService, 'registerNewProduct').resolves(regNewProductServiceResMock);
+
+    const req = { body: { name: 'Guarda chuva RGB' } };
+
+    const res = {
+      status: sinon.stub().returnsThis(),
+      json: sinon.stub(),
+    };
+
+    await productsController.registerNewProduct(req, res);
+
+    expect(res.status).to.have.been.calledWith(201);
+    expect(res.json).to.have.been.calledWith(newProductMock);
+  });
+
+  it('Verificando o retorno do productsController.registerNewProduct com um produto sem nome - status 400', async function () {
+    sinon.stub(productsService, 'registerNewProduct').resolves(regNoNameProductServiceResMock);
+
+    const req = { body: {} };
+    const res = {
+      status: sinon.stub().returnsThis(),
+      json: sinon.stub(),
+    };
+
+    await productsController.registerNewProduct(req, res);
+
+    expect(res.status).to.have.been.calledWith(400);
+    expect(res.json).to.have.been.calledWith(noNameObj);
+  });
+
+  it('Verificando o retorno do productsController.registerNewProduct de um produto com nome inválido - status 422', async function () {
+    sinon.stub(productsService, 'registerNewProduct').resolves(regBadNameProductServiceResMock);
+
+    const req = { body: { name: 'RGB' } };
+    const res = {
+      status: sinon.stub().returnsThis(),
+      json: sinon.stub(),
+    };
+
+    await productsController.registerNewProduct(req, res);
+
+    expect(res.status).to.have.been.calledWith(422);
+    expect(res.json).to.have.been.calledWith(badNameObj);
   });
 });

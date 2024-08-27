@@ -1,4 +1,10 @@
-const { SUCCESSFUL, NOT_FOUND } = require('../utils/statusStringsHTTP');
+const { 
+  SUCCESSFUL, 
+  NOT_FOUND, 
+  CREATED, 
+  BAD_REQUEST,
+  INVALID_VALUE,
+} = require('../utils/statusStringsHTTP');
 
 const allProductsMock = [
   {
@@ -20,7 +26,16 @@ const singleProductMock = {
   name: 'Martelo de Thor',
 };
 
+const newProductMock = {
+  id: 4,
+  name: 'Guarda chuva RGB',
+};
+
 const dataNotFoundObj = { message: 'Product not found' };
+
+const noNameObj = { message: '"name" is required' };
+
+const badNameObj = { message: '"name" length must be at least 5 characters long' };
 
 const productNotFoundServiceResMock = {
   status: NOT_FOUND,
@@ -37,11 +52,32 @@ const productByIdServiceResMock = {
   data: singleProductMock,
 };
 
+const regNewProductServiceResMock = {
+  status: CREATED,
+  data: newProductMock,
+};
+
+const regNoNameProductServiceResMock = {
+  status: BAD_REQUEST,
+  data: noNameObj,
+};
+
+const regBadNameProductServiceResMock = {
+  status: INVALID_VALUE,
+  data: badNameObj,
+};
+
 module.exports = {
   allProductsMock,
   singleProductMock,
+  newProductMock,
   dataNotFoundObj,
+  noNameObj,
+  badNameObj,
   allProductsServiceResMock,
   productByIdServiceResMock,
   productNotFoundServiceResMock,
+  regNewProductServiceResMock,
+  regNoNameProductServiceResMock,
+  regBadNameProductServiceResMock,
 };
