@@ -18,7 +18,20 @@ const getProductById = async (productId) => {
   return camelize(product);
 };
 
+const registerNewProduct = async (newProduct) => {
+  await connection.execute(
+    'INSERT INTO products (name) VALUES (?);',
+    [newProduct.name],
+  );
+  const [[newProductEntry]] = await connection.execute(
+    'SELECT * FROM products WHERE name = ?;',
+    [newProduct.name],
+  );
+  return camelize(newProductEntry);
+};
+
 module.exports = {
   getAllProducts,
   getProductById,
+  registerNewProduct,
 };
