@@ -1,11 +1,12 @@
 const camelize = require('camelize');
 const connection = require('./connection');
+const formatArrays = require('../utils/formatArrays');
 
 const getAllProducts = async () => {
   const [products] = await connection.execute(
     'SELECT * FROM products ORDER BY id',
   );
-  const camelizedProducts = products.map((product) => camelize(product));
+  const camelizedProducts = formatArrays.camelizeArray(products);
   return camelizedProducts;
 };
 

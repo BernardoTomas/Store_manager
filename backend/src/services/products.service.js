@@ -1,4 +1,4 @@
-const productsModel = require('../models/products.model');
+const { productsModel } = require('../models');
 
 const getAllProducts = async () => {
   const allProducts = await productsModel.getAllProducts();
