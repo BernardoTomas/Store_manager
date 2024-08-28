@@ -4,6 +4,7 @@ const {
   CREATED, 
   BAD_REQUEST,
   INVALID_VALUE,
+  NO_CONTENT,
 } = require('../utils/statusStringsHTTP');
 
 const allProductsMock = [
@@ -77,6 +78,10 @@ const updateProductServiceResMock = {
   data: updatedProductMock,
 };
 
+const deleteProductServiceResMock = {
+  status: NO_CONTENT,
+};
+
 module.exports = {
   allProductsMock,
   singleProductMock,
@@ -92,4 +97,5 @@ module.exports = {
   regBadNameProductServiceResMock,
   updatedProductMock,
   updateProductServiceResMock,
+  deleteProductServiceResMock,
 };

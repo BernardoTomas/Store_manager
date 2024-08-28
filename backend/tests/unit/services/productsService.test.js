@@ -15,7 +15,7 @@ const {
   badNameObj,
   noNameObj,
 } = require('../mocks/products.mocks');
-const { SUCCESSFUL, NOT_FOUND, INVALID_VALUE, BAD_REQUEST } = require('../utils/statusStringsHTTP');
+const { SUCCESSFUL, NOT_FOUND, INVALID_VALUE, BAD_REQUEST, NO_CONTENT } = require('../utils/statusStringsHTTP');
 
 describe('Testes do products.service', function () {
   afterEach(function () {
@@ -139,5 +139,30 @@ describe('Testes do products.service', function () {
     expect(updatedProductRes).to.be.an('object');
     expect(updatedProductRes.status).to.equal(NOT_FOUND);
     expect(updatedProductRes.data).to.deep.equal(dataNotFoundObj);
+  });
+
+  it('Verificando o retorno do productsService.deleteProduct de um produto existente', async function () {
+    sinon.stub(productsModel, 'getProductById').resolves(singleProductMock);
+    sinon.stub(productsModel, 'deleteProduct').resolves(null);
+
+    const productId = 1;
+    
+    const deleteProductRes = await productsService.deleteProduct(productId);
+
+    expect(deleteProductRes).to.be.an('object');
+    expect(deleteProductRes.status).to.equal(NO_CONTENT);
+  });
+
+  it('Verificando o retorno do productsService.deleteProduct de um produto inexistente', async function () {
+    sinon.stub(productsModel, 'getProductById').resolves(undefined);
+    sinon.stub(productsModel, 'deleteProduct').resolves(null);
+
+    const productId = 1000;
+    
+    const deleteProductRes = await productsService.deleteProduct(productId);
+
+    expect(deleteProductRes).to.be.an('object');
+    expect(deleteProductRes.status).to.equal(NOT_FOUND);
+    expect(deleteProductRes.data).to.deep.equal(dataNotFoundObj);
   });
 });

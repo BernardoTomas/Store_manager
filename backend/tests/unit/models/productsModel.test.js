@@ -72,4 +72,14 @@ describe('Testes do products.model', function () {
 
     expect(dbCall).to.have.been.calledWith();
   });
+
+  it('Verificando o funcionamento do productsModel.deleteProduct apagando um produto existente', async function () {
+    const dbCall = sinon.stub(connection, 'execute').resolves(null);
+    
+    const testProdId = 1;
+
+    await productsModel.deleteProduct(testProdId);
+
+    expect(dbCall).to.have.been.calledWith();
+  });
 });

@@ -22,6 +22,7 @@ const {
   badNameObj,
   updateProductServiceResMock,
   updatedProductMock,
+  deleteProductServiceResMock,
 } = require('../mocks/products.mocks');
 
 describe('Testes do products.controller', function () {
@@ -178,6 +179,35 @@ describe('Testes do products.controller', function () {
     };
 
     await productsController.updateProduct(req, res);
+
+    expect(res.status).to.have.been.calledWith(404);
+    expect(res.json).to.have.been.calledWith(dataNotFoundObj);
+  });
+
+  it('Verificando o retorno do productsController.deleteProduct de um produto existente - status 204', async function () {
+    sinon.stub(productsService, 'deleteProduct').resolves(deleteProductServiceResMock);
+
+    const req = { params: { id: 1 } };
+    const res = {
+      status: sinon.stub().returnsThis(),
+      json: sinon.stub(),
+    };
+
+    await productsController.deleteProduct(req, res);
+
+    expect(res.status).to.have.been.calledWith(204);
+  });
+
+  it('Verificando o retorno do productsController.deleteProduct de um produto inexistente - status 404', async function () {
+    sinon.stub(productsService, 'deleteProduct').resolves(productNotFoundServiceResMock);
+
+    const req = { params: { id: 10000 } };
+    const res = {
+      status: sinon.stub().returnsThis(),
+      json: sinon.stub(),
+    };
+
+    await productsController.deleteProduct(req, res);
 
     expect(res.status).to.have.been.calledWith(404);
     expect(res.json).to.have.been.calledWith(dataNotFoundObj);
