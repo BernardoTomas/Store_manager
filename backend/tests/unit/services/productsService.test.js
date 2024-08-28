@@ -10,8 +10,12 @@ const {
   regNewProductServiceResMock,
   regNoNameProductServiceResMock,
   regBadNameProductServiceResMock,
+  updatedProductMock,
+  updateProductServiceResMock,
+  badNameObj,
+  noNameObj,
 } = require('../mocks/products.mocks');
-const { SUCCESSFUL, NOT_FOUND } = require('../utils/statusStringsHTTP');
+const { SUCCESSFUL, NOT_FOUND, INVALID_VALUE, BAD_REQUEST } = require('../utils/statusStringsHTTP');
 
 describe('Testes do products.service', function () {
   afterEach(function () {
@@ -40,7 +44,7 @@ describe('Testes do products.service', function () {
   });
 
   it('Verificando o retorno do productsService.getProductById com um id inválido', async function () {
-    sinon.stub(productsModel, 'getProductById').resolves({});
+    sinon.stub(productsModel, 'getProductById').resolves(undefined);
 
     const productId = 1000;
 
@@ -82,5 +86,58 @@ describe('Testes do products.service', function () {
 
     expect(newProductRegistryRes).to.be.an('object');
     expect(newProductRegistryRes).to.deep.equal(regBadNameProductServiceResMock);
+  });
+
+  it('Verificando o retorno do productsService.updateProduct de um produto existente com nome válido', async function () {
+    sinon.stub(productsModel, 'updateProduct').resolves(null);
+    sinon.stub(productsModel, 'getProductById').resolves(updatedProductMock);
+    const productId = 1;
+    const newNameObj = {
+      name: 'Guarda chuva RGB',
+    };
+
+    const updatedProductRes = await productsService.updateProduct(productId, newNameObj);
+
+    expect(updatedProductRes).to.be.an('object');
+    expect(updatedProductRes).to.deep.equal(updateProductServiceResMock);
+  });
+
+  it('Verificando o retorno do productsService.updateProduct de um produto existente com nome inválido', async function () {
+    const productId = 1;
+    const newNameObj = {
+      name: 'RGB',
+    };
+
+    const updatedProductRes = await productsService.updateProduct(productId, newNameObj);
+
+    expect(updatedProductRes).to.be.an('object');
+    expect(updatedProductRes.status).to.equal(INVALID_VALUE);
+    expect(updatedProductRes.data).to.deep.equal(badNameObj);
+  });
+
+  it('Verificando o retorno do productsService.updateProduct de um produto existente sem um nome', async function () {
+    const productId = 1;
+    const newNameObj = {};
+
+    const updatedProductRes = await productsService.updateProduct(productId, newNameObj);
+
+    expect(updatedProductRes).to.be.an('object');
+    expect(updatedProductRes.status).to.equal(BAD_REQUEST);
+    expect(updatedProductRes.data).to.deep.equal(noNameObj);
+  });
+
+  it('Verificando o retorno do productsService.updateProduct de um produto inexistente', async function () {
+    sinon.stub(productsModel, 'getProductById').resolves(undefined);
+    
+    const productId = 10000;
+    const newNameObj = {
+      name: 'Guarda chuva RGB',
+    };
+
+    const updatedProductRes = await productsService.updateProduct(productId, newNameObj);
+
+    expect(updatedProductRes).to.be.an('object');
+    expect(updatedProductRes.status).to.equal(NOT_FOUND);
+    expect(updatedProductRes.data).to.deep.equal(dataNotFoundObj);
   });
 });

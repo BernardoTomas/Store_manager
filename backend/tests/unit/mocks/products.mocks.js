@@ -31,6 +31,11 @@ const newProductMock = {
   name: 'Guarda chuva RGB',
 };
 
+const updatedProductMock = {
+  id: 1,
+  name: 'Guarda chuva RGB',
+};
+
 const dataNotFoundObj = { message: 'Product not found' };
 
 const noNameObj = { message: '"name" is required' };
@@ -67,6 +72,11 @@ const regBadNameProductServiceResMock = {
   data: badNameObj,
 };
 
+const updateProductServiceResMock = {
+  status: SUCCESSFUL,
+  data: updatedProductMock,
+};
+
 module.exports = {
   allProductsMock,
   singleProductMock,
@@ -80,4 +90,6 @@ module.exports = {
   regNewProductServiceResMock,
   regNoNameProductServiceResMock,
   regBadNameProductServiceResMock,
+  updatedProductMock,
+  updateProductServiceResMock,
 };

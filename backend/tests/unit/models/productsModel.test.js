@@ -1,5 +1,9 @@
-const { expect } = require('chai');
+const chai = require('chai');
 const sinon = require('sinon');
+const sinonChai = require('sinon-chai');
+
+const { expect } = chai;
+chai.use(sinonChai);
 const connection = require('../../../src/models/connection');
 const { productsModel } = require('../../../src/models');
 const { allProductsMock, singleProductMock, newProductMock } = require('../mocks/products.mocks');
@@ -53,5 +57,19 @@ describe('Testes do products.model', function () {
 
     expect(newProductRegistry).to.be.an('object');
     expect(newProductRegistry).to.deep.equal(newProductMock);
+  });
+
+  it('Verificando o funcionamento do productsModel.updateProduct atualizando um produto existente com um nome válido', async function () {
+    const dbCall = sinon.stub(connection, 'execute').resolves(null);
+    
+    const testProdId = 1;
+
+    const newNameObj = {
+      name: 'Guarda chuva RGB',
+    };
+
+    await productsModel.updateProduct(testProdId, newNameObj);
+
+    expect(dbCall).to.have.been.calledWith();
   });
 });

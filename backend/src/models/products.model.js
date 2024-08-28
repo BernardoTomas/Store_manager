@@ -30,8 +30,16 @@ const registerNewProduct = async (newProduct) => {
   return camelize(newProductEntry);
 };
 
+const updateProduct = async (productId, newNameObj) => {
+  await connection.execute(
+    'UPDATE products SET name = ? WHERE id = ?',
+    [newNameObj.name, productId],
+  );
+};
+
 module.exports = {
   getAllProducts,
   getProductById,
   registerNewProduct,
+  updateProduct,
 };

@@ -20,6 +20,8 @@ const {
   noNameObj,
   regBadNameProductServiceResMock,
   badNameObj,
+  updateProductServiceResMock,
+  updatedProductMock,
 } = require('../mocks/products.mocks');
 
 describe('Testes do products.controller', function () {
@@ -119,5 +121,65 @@ describe('Testes do products.controller', function () {
 
     expect(res.status).to.have.been.calledWith(422);
     expect(res.json).to.have.been.calledWith(badNameObj);
+  });
+
+  it('Verificando o retorno do productsController.updateProduct de um produto existente com nome válido - status 200', async function () {
+    sinon.stub(productsService, 'updateProduct').resolves(updateProductServiceResMock);
+
+    const req = { body: { name: 'Guarda chuva RGB' }, params: { id: 1 } };
+    const res = {
+      status: sinon.stub().returnsThis(),
+      json: sinon.stub(),
+    };
+
+    await productsController.updateProduct(req, res);
+
+    expect(res.status).to.have.been.calledWith(200);
+    expect(res.json).to.have.been.calledWith(updatedProductMock);
+  });
+
+  it('Verificando o retorno do productsController.updateProduct de um produto existente com nome inválido - status 422', async function () {
+    sinon.stub(productsService, 'updateProduct').resolves(regBadNameProductServiceResMock);
+
+    const req = { body: { name: 'RGB' }, params: { id: 1 } };
+    const res = {
+      status: sinon.stub().returnsThis(),
+      json: sinon.stub(),
+    };
+
+    await productsController.updateProduct(req, res);
+
+    expect(res.status).to.have.been.calledWith(422);
+    expect(res.json).to.have.been.calledWith(badNameObj);
+  });
+
+  it('Verificando o retorno do productsController.updateProduct de um produto existente sem nome - status 400', async function () {
+    sinon.stub(productsService, 'updateProduct').resolves(regNoNameProductServiceResMock);
+
+    const req = { body: {}, params: { id: 1 } };
+    const res = {
+      status: sinon.stub().returnsThis(),
+      json: sinon.stub(),
+    };
+
+    await productsController.updateProduct(req, res);
+
+    expect(res.status).to.have.been.calledWith(400);
+    expect(res.json).to.have.been.calledWith(noNameObj);
+  });
+
+  it('Verificando o retorno do productsController.updateProduct de um produto inexistente - status 400', async function () {
+    sinon.stub(productsService, 'updateProduct').resolves(productNotFoundServiceResMock);
+
+    const req = { body: { name: 'Guarda chuva RGB' }, params: { id: 1000 } };
+    const res = {
+      status: sinon.stub().returnsThis(),
+      json: sinon.stub(),
+    };
+
+    await productsController.updateProduct(req, res);
+
+    expect(res.status).to.have.been.calledWith(404);
+    expect(res.json).to.have.been.calledWith(dataNotFoundObj);
   });
 });
