@@ -14,6 +14,19 @@ const {
   salesByIdMock,
   salesNotFoundServiceResMock,
   saleNotFoundObj,
+  regNewSaleProdServiceResMock,
+  newSalesProductMock,
+  newSalesProductModelMock,
+  regNewSaleProdServiceResNoPIdMock,
+  regNewSaleProdServiceResNoQtdMock,
+  regNewSaleProdServiceResBadQtdMock,
+  regNewSaleProdServiceResProdNotFoundMock,
+  productNotFoundError,
+  badQtdError,
+  noQtdError,
+  noPIdError,
+  newSalesProductModelNoPIdMock,
+  newSalesProductModelNoQtMock,
 } = require('../mocks/sales.mocks');
 
 describe('Testes do sales.controller', function () {
@@ -67,5 +80,103 @@ describe('Testes do sales.controller', function () {
 
     expect(res.status).to.have.been.calledWith(404);
     expect(res.json).to.have.been.calledWith(saleNotFoundObj);
+  });
+
+  it('Verificando o retorno do salesController.registerNewSaleProducts com um array de produtos válido - status 201', async function () {
+    sinon.stub(salesService, 'registerNewSaleProducts').resolves(regNewSaleProdServiceResMock);
+
+    const req = newSalesProductMock;
+
+    const res = {
+      status: sinon.stub().returnsThis(),
+      json: sinon.stub(),
+    };
+
+    await salesController.registerNewSaleProducts(req, res);
+
+    expect(res.status).to.have.been.calledWith(201);
+    expect(res.json).to.have.been.calledWith(newSalesProductModelMock);
+  });
+
+  it('Verificando o retorno do salesController.registerNewSaleProducts de um array com um objeto sem productId - status 400', async function () {
+    sinon.stub(salesService, 'registerNewSaleProducts').resolves(regNewSaleProdServiceResNoPIdMock);
+
+    const req = newSalesProductModelNoPIdMock;
+
+    const res = {
+      status: sinon.stub().returnsThis(),
+      json: sinon.stub(),
+    };
+
+    await salesController.registerNewSaleProducts(req, res);
+
+    expect(res.status).to.have.been.calledWith(400);
+    expect(res.json).to.have.been.calledWith(noPIdError);
+  });
+
+  it('Verificando o retorno do salesController.registerNewSaleProducts de um array com um objeto sem quantity - status 400', async function () {
+    sinon.stub(salesService, 'registerNewSaleProducts').resolves(regNewSaleProdServiceResNoQtdMock);
+
+    const req = newSalesProductModelNoQtMock;
+
+    const res = {
+      status: sinon.stub().returnsThis(),
+      json: sinon.stub(),
+    };
+
+    await salesController.registerNewSaleProducts(req, res);
+
+    expect(res.status).to.have.been.calledWith(400);
+    expect(res.json).to.have.been.calledWith(noQtdError);
+  });
+
+  it('Verificando o retorno do salesController.registerNewSaleProducts de um array com um objeto com quantity inválido - status 422', async function () {
+    sinon.stub(salesService, 'registerNewSaleProducts').resolves(regNewSaleProdServiceResBadQtdMock);
+
+    const req = [
+      {
+        productId: 1,
+        quantity: 0,
+      },
+      {
+        productId: 2,
+        quantity: 5,
+      },
+    ];
+
+    const res = {
+      status: sinon.stub().returnsThis(),
+      json: sinon.stub(),
+    };
+
+    await salesController.registerNewSaleProducts(req, res);
+
+    expect(res.status).to.have.been.calledWith(422);
+    expect(res.json).to.have.been.calledWith(badQtdError);
+  });
+
+  it('Verificando o retorno do salesController.registerNewSaleProducts de um array com um objeto inexistente - status 404', async function () {
+    sinon.stub(salesService, 'registerNewSaleProducts').resolves(regNewSaleProdServiceResProdNotFoundMock);
+
+    const req = [
+      {
+        productId: 10000,
+        quantity: 1,
+      },
+      {
+        productId: 2,
+        quantity: 5,
+      },
+    ];
+
+    const res = {
+      status: sinon.stub().returnsThis(),
+      json: sinon.stub(),
+    };
+
+    await salesController.registerNewSaleProducts(req, res);
+
+    expect(res.status).to.have.been.calledWith(404);
+    expect(res.json).to.have.been.calledWith(productNotFoundError);
   });
 });

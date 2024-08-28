@@ -27,7 +27,23 @@ const getSalesById = async (saleId) => {
   return camelizedSales;
 };
 
+const registerNewSaleProducts = async (saleProductsArr) => {
+  const [{ insertId }] = await connection.execute(
+    'INSERT INTO sales (date) VALUES (NOW());',
+  );
+  await Promise.all(saleProductsArr.map(({ productId, quantity }) => connection.execute(
+    `INSERT INTO sales_products (sale_id, product_id, quantity)
+      VALUES (?, ?, ?);`,
+    [insertId, productId, quantity],
+  )));
+  return {
+    id: insertId,
+    itemsSold: saleProductsArr,
+  };
+};
+
 module.exports = {
   getAllSales,
   getSalesById,
+  registerNewSaleProducts,
 };

@@ -2,7 +2,14 @@ const { expect } = require('chai');
 const sinon = require('sinon');
 const connection = require('../../../src/models/connection');
 const { salesModel } = require('../../../src/models');
-const { allSalesMock, allSalesMockDB, salesByIdMockDB, salesByIdMock } = require('../mocks/sales.mocks');
+const { 
+  allSalesMock, 
+  allSalesMockDB, 
+  salesByIdMockDB, 
+  salesByIdMock,
+  newSaleId,
+  newSalesProductMock,
+} = require('../mocks/sales.mocks');
 
 describe('Testes do sales.model', function () {
   afterEach(function () {
@@ -36,5 +43,21 @@ describe('Testes do sales.model', function () {
 
     expect(salesById).to.be.an('array');
     expect(salesById).to.have.length(0);
+  });
+
+  it('Verificando o funcionamento do salesModel.registerNewSaleProducts com um array de produtos válido', async function () {
+    sinon.stub(connection, 'execute')
+      .onFirstCall()
+      .resolves([{ insertId: newSaleId }])
+      .onSecondCall()
+      .resolves(null)
+      .onThirdCall()
+      .resolves(null);
+    
+    const newSaleProductsObj = await salesModel.registerNewSaleProducts(newSalesProductMock);
+    
+    expect(newSaleProductsObj).to.be.an('object');
+    expect(newSaleProductsObj.id).to.be.equal(newSaleId);
+    expect(newSaleProductsObj.itemsSold).to.deep.equal(newSalesProductMock);
   });
 });

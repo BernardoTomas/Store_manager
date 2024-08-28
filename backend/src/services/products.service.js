@@ -15,9 +15,10 @@ const getProductById = async (productId) => {
 };
 
 const registerNewProduct = async (newProduct) => {
+  // Refactor this to middleware
   const error = schema.validateProductName(newProduct);
   if (error) return { status: error.status, data: error.data };
-
+  // ----------------
   const newProductRegistry = await productsModel.registerNewProduct(newProduct);
   return { status: 'CREATED', data: newProductRegistry };
 };
